@@ -489,3 +489,36 @@ export class CollapseAllAction extends Action {
 		return TPromise.as(null);
 	}
 }
+
+export const DEFAULT_STYLES: _.ITreeStyles = {
+	dark: {
+		activeFocusBackground: '#073655',
+		activeSelectionBackground: '#0E639C',
+		activeSelectionForeground: 'white',
+		activeFocusAndSelectionBackground: '#094771',
+		activeFocusAndSelectionForeground: 'white',
+		inactiveSelectionBackground: '#3F3F46',
+		hoverBackground: '#2A2D2E',
+		dropBackground: '#383B3D'
+	},
+	light: {
+		activeFocusBackground: '#DCEBFC',
+		activeSelectionBackground: '#4FA7FF',
+		activeSelectionForeground: 'white',
+		activeFocusAndSelectionBackground: '#3399FF',
+		activeFocusAndSelectionForeground: 'white',
+		inactiveSelectionBackground: '#CCCEDB',
+		hoverBackground: '#F0F0F0',
+		dropBackground: '#DDECFF'
+	},
+	hc: {
+		activeFocusBackground: 'none',
+		activeSelectionBackground: 'none',
+		activeSelectionForeground: 'inherit',
+		activeFocusAndSelectionBackground: 'none',
+		activeFocusAndSelectionForeground: 'inherit',
+		inactiveSelectionBackground: 'none',
+		hoverBackground: 'none',
+		dropBackground: 'none'
+	}
+};

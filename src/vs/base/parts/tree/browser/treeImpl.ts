@@ -14,6 +14,7 @@ import _ = require('vs/base/parts/tree/browser/tree');
 import { INavigator, MappedNavigator } from 'vs/base/common/iterator';
 import Event, { Emitter } from 'vs/base/common/event';
 import Lifecycle = require('vs/base/common/lifecycle');
+import * as dom from 'vs/base/browser/dom';
 
 export class TreeContext implements _.ITreeContext {
 
@@ -83,6 +84,7 @@ export class Tree extends Events.EventEmitter implements _.ITree {
 		this.options.alwaysFocused = this.options.alwaysFocused === true ? true : false;
 		this.options.useShadows = this.options.useShadows === false ? false : true;
 		this.options.paddingOnRow = this.options.paddingOnRow === false ? false : true;
+		this.options.styles = this.options.styles || TreeDefaults.DEFAULT_STYLES;
 
 		this.context = new TreeContext(this, configuration, options);
 		this.model = new Model.TreeModel(this.context);
@@ -94,6 +96,53 @@ export class Tree extends Events.EventEmitter implements _.ITree {
 		this.addEmitter2(this.view);
 
 		this.toDispose.push(this.model.addListener2('highlight', () => this._onHighlightChange.fire()));
+
+		this.updateStyles(this.options.styles);
+	}
+
+	public updateStyles(newStyles: _.ITreeStyles): void {
+		this.options.styles = newStyles;
+
+		const styles = [newStyles.dark, newStyles.light, newStyles.hc];
+		const themePrefix = ['.vs-dark', '.vs', '.hc-black'];
+
+		// TODO no 3 themes, just one
+		// TODO needs to be behind a random id for this tree (counter)
+		// TODO helper needs to be able to clear the stylesheet that was produced before
+
+		styles.forEach((style, index) => {
+			const prefix = themePrefix[index];
+
+			dom.createCSSRule(
+				`${prefix} .monaco-tree.focused .monaco-tree-rows > .monaco-tree-row.focused:not(.highlighted)`,
+				`background-color: ${style.activeFocusBackground};`
+			);
+
+			dom.createCSSRule(
+				`${prefix} .monaco-tree.focused .monaco-tree-rows > .monaco-tree-row.selected:not(.highlighted)`,
+				`background-color: ${style.activeSelectionBackground}; color: ${style.activeSelectionForeground};`
+			);
+
+			dom.createCSSRule(
+				`${prefix} .monaco-tree.focused .monaco-tree-rows > .monaco-tree-row.focused.selected:not(.highlighted)`,
+				`background-color: ${style.activeFocusAndSelectionBackground}; color: ${style.activeFocusAndSelectionForeground};`
+			);
+
+			dom.createCSSRule(
+				`${prefix} .monaco-tree .monaco-tree-rows > .monaco-tree-row.selected:not(.highlighted)`,
+				`background-color: ${style.inactiveSelectionBackground};`
+			);
+
+			dom.createCSSRule(
+				`${prefix} .monaco-tree .monaco-tree-rows > .monaco-tree-row:hover:not(.highlighted):not(.selected):not(.focused)`,
+				`background-color: ${style.hoverBackground};`
+			);
+
+			dom.createCSSRule(
+				`${prefix} .monaco-tree .monaco-tree-wrapper.drop-target, ${prefix} .monaco-tree .monaco-tree-rows > .monaco-tree-row.drop-target`,
+				`background-color: ${style.dropBackground};`
+			);
+		});
 	}
 
 	get onDOMFocus(): Event<void> {

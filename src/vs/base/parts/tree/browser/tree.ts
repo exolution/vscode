@@ -22,6 +22,8 @@ export interface ITree extends Events.IEventEmitter {
 	onHighlightChange: Event<void>;
 	onDispose: Event<void>;
 
+	updateStyles(newStyles: ITreeStyles);
+
 	/**
 	 * Returns the tree's DOM element.
 	 */
@@ -638,6 +640,23 @@ export interface ITreeConfiguration {
 	accessibilityProvider?: IAccessibilityProvider;
 }
 
+export interface ITreeStyles {
+	dark: ITreeStyle;
+	light: ITreeStyle;
+	hc: ITreeStyle;
+}
+
+export interface ITreeStyle {
+	activeFocusBackground: string;
+	activeSelectionBackground: string;
+	activeSelectionForeground: string;
+	activeFocusAndSelectionBackground: string;
+	activeFocusAndSelectionForeground: string;
+	inactiveSelectionBackground: string;
+	hoverBackground: string;
+	dropBackground: string;
+}
+
 export interface ITreeOptions {
 	twistiePixels?: number;
 	showTwistie?: boolean;
@@ -649,6 +668,7 @@ export interface ITreeOptions {
 	paddingOnRow?: boolean;
 	ariaLabel?: string;
 	keyboardSupport?: boolean;
+	styles?: ITreeStyles;
 }
 
 export interface ITreeContext extends ITreeConfiguration {

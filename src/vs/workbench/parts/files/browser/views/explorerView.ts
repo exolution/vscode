@@ -14,8 +14,7 @@ import labels = require('vs/base/common/labels');
 import paths = require('vs/base/common/paths');
 import { Action, IActionRunner, IAction } from 'vs/base/common/actions';
 import { prepareActions } from 'vs/workbench/browser/actionBarRegistry';
-import { ITree } from 'vs/base/parts/tree/browser/tree';
-import { Tree } from 'vs/base/parts/tree/browser/treeImpl';
+import { ITree, ITreeConfiguration } from 'vs/base/parts/tree/browser/tree';
 import { IFilesConfiguration, ExplorerFolderContext, FilesExplorerFocussedContext, ExplorerFocussedContext } from 'vs/workbench/parts/files/common/files';
 import { FileOperation, FileOperationEvent, IResolveFileOptions, FileChangeType, FileChangesEvent, IFileChange, IFileService } from 'vs/platform/files/common/files';
 import { RefreshViewExplorerAction, NewFolderAction, NewFileAction } from 'vs/workbench/parts/files/browser/fileActions';
@@ -41,6 +40,7 @@ import { IMessageService, Severity } from 'vs/platform/message/common/message';
 import { IContextKeyService, IContextKey } from 'vs/platform/contextkey/common/contextkey';
 import { ResourceContextKey } from 'vs/workbench/common/resourceContextKey';
 import { IWorkbenchThemeService, IFileIconTheme } from 'vs/workbench/services/themes/common/themeService';
+import { ThemedTreeWrapper } from "vs/platform/theme/browser/styler";
 
 export class ExplorerView extends CollapsibleViewletView {
 
@@ -339,7 +339,7 @@ export class ExplorerView extends CollapsibleViewletView {
 		const dnd = this.instantiationService.createInstance(FileDragAndDrop);
 		const accessibilityProvider = this.instantiationService.createInstance(FileAccessibilityProvider);
 
-		this.explorerViewer = new Tree(container.getHTMLElement(), {
+		this.explorerViewer = this.instantiationService.createInstance(ThemedTreeWrapper, container.getHTMLElement(), {
 			dataSource,
 			renderer,
 			controller,
@@ -347,13 +347,13 @@ export class ExplorerView extends CollapsibleViewletView {
 			filter: this.filter,
 			dnd,
 			accessibilityProvider
-		}, {
+		} as ITreeConfiguration, {
 				autoExpandSingleChildren: true,
 				ariaLabel: nls.localize('treeAriaLabel', "Files Explorer"),
 				twistiePixels: 12,
 				showTwistie: false,
 				keyboardSupport: false
-			});
+			}).tree;
 
 		this.toDispose.push(lifecycle.toDisposable(() => renderer.dispose()));
 

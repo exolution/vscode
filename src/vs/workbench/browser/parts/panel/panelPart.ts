@@ -24,6 +24,11 @@ import { IKeybindingService } from 'vs/platform/keybinding/common/keybinding';
 import { IInstantiationService } from 'vs/platform/instantiation/common/instantiation';
 import { ActionsOrientation, ActionBar } from 'vs/base/browser/ui/actionbar/actionbar';
 import { ClosePanelAction, PanelAction } from 'vs/workbench/browser/parts/panel/panelActions';
+// import { EditorBackground, IThemingRegistry, Extensions, ITheme } from "vs/platform/theme/common/themingRegistry";
+// import { IThemeService } from "vs/workbench/services/themes/common/themeService";
+
+// const theming = Registry.as<IThemingRegistry>(Extensions.ThemingContribution);
+// const panelBackground = theming.registerColor('panelBackground', nls.localize('panelBackground', "Panel Background Color"), { ($EditorBacktround)  });
 
 export class PanelPart extends CompositePart<Panel> implements IPanelService {
 
@@ -44,7 +49,8 @@ export class PanelPart extends CompositePart<Panel> implements IPanelService {
 		@IContextMenuService contextMenuService: IContextMenuService,
 		@IPartService partService: IPartService,
 		@IKeybindingService keybindingService: IKeybindingService,
-		@IInstantiationService instantiationService: IInstantiationService
+		@IInstantiationService instantiationService: IInstantiationService,
+		// @IThemeService private themeService: IThemeService
 	) {
 		super(
 			messageService,
@@ -90,6 +96,21 @@ export class PanelPart extends CompositePart<Panel> implements IPanelService {
 	public get onDidPanelClose(): Event<IPanel> {
 		return this._onDidCompositeClose.event;
 	}
+
+	public createContentArea(parent: Builder): Builder {
+		const contentArea = super.createContentArea(parent);
+		// this.updateStyles(this.theming.active);
+
+		return contentArea;
+	}
+
+	// protected updateStyles(theme: ITheme): void {
+	// 	this.themeService.getColorTheme().colorMap(panelBackground.id);
+
+	// 	this.getContentArea().style('background-color', theme.getColor(panelBackground.id));
+
+	// 	this.getContentArea().style('background-color', panelBackground.value);
+	// }
 
 	public openPanel(id: string, focus?: boolean): TPromise<Panel> {
 		if (this.blockOpeningPanel) {

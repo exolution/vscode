@@ -7,6 +7,8 @@
 import { IDisposable, dispose, Disposable } from 'vs/base/common/lifecycle';
 import { Scope, Memento } from 'vs/workbench/common/memento';
 import { IStorageService } from 'vs/platform/storage/common/storage';
+import { Registry } from 'vs/platform/platform';
+import { Extensions, IThemingRegistry, ITheme } from 'vs/platform/theme/common/themingRegistry';
 
 /**
  * Base class of any core/ui component in the workbench. Examples include services, extensions, parts, viewlets and quick open.
@@ -45,10 +47,24 @@ export class WorkbenchComponent extends Disposable implements IWorkbenchComponen
 		this._toUnbind = [];
 		this.id = id;
 		this.componentMemento = new Memento(this.id);
+
+		/*this._toUnbind.push(*/this.theming.registerThemingParticipant((theme, cssRules) => this.updateStyles(theme));
+	}
+
+	protected get theming(): IThemingRegistry {
+		return Registry.as<IThemingRegistry>(Extensions.ThemingContribution);
 	}
 
 	protected get toUnbind() {
 		return this._toUnbind;
+	}
+
+	protected getColor(color: IColorDefinition): string {
+		return this.themeService.getColorTheme().colorMap(panelBackground.id);
+	}
+
+	protected updateStyles(activeTheme: ITheme): void {
+		/* Subclasses to override */
 	}
 
 	public getId(): string {
